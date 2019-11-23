@@ -145,17 +145,50 @@ class _MyAppState extends State<MyApp> {
   }
 
   Widget handleListView() {
-    return Container(
-      child: Expanded(
-        child: ListView.builder(
-          itemCount: stationboards.length,
-          itemBuilder: (BuildContext context, int index) {
-            return ListTile(title: Text(stationboards[index].name));
-          },
+    if (stationboards.length > 0) {
+      return Container(
+        child: Expanded(
+          child: ListView.builder(
+            padding: EdgeInsets.only(top: 12),
+            itemCount: stationboards.length,
+            itemBuilder: (BuildContext context, int index) {
+              return ListTile(
+                contentPadding: EdgeInsets.only(top: 10, left: 20, right: 20),
+                title: Text(
+                  '→ ${stationboards[index].to}',
+                  style: TextStyle(fontSize: 18),
+                ),
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(stationboards[index].name),
+                    Container(
+                      child: Text(resolvePlatform(stationboards[index].stop.platform)),
+                      padding: EdgeInsets.only(top: 10),
+                    )
+                  ],
+                ),
+                trailing: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: <Widget>[
+                    Text('Fährt in'),
+                    Text(
+                      '${calculateMinutesTillDeparture(stationboards[index].stop.departure).toString()}′',
+                      style: TextStyle(fontSize: 36, fontWeight: FontWeight.bold, color: Colors.redAccent),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
         ),
-      ),
-    );
+      );
+    } else {
+      return Text('Keine Abfahrtsinformationen verfügbar!');
+    }
   }
+
+  String resolvePlatform(String platform) => platform != null ? 'Gleis $platform' : '';
 
   void setStationboards(String id) async {
     List<Stationboard> connections = await TransportService.fetchConnectionsFrom(id);
@@ -216,5 +249,10 @@ class _MyAppState extends State<MyApp> {
           return Icons.transit_enterexit;
       }
     }
+  }
+
+  int calculateMinutesTillDeparture(String departure) {
+    var departureTime = DateTime.parse(departure);
+    return departureTime.difference(DateTime.now()).inMinutes;
   }
 }
