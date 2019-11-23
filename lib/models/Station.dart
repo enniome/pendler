@@ -6,8 +6,9 @@ class Station {
   final String score;
   final Coordinate coordinate;
   final int distance;
+  final String icon;
 
-  Station({this.id, this.name, this.score, this.coordinate, this.distance});
+  Station({this.id, this.name, this.score, this.coordinate, this.distance, this.icon});
 
   factory Station.fromJson(Map<String, dynamic> json) {
     return Station(
@@ -15,7 +16,8 @@ class Station {
       name: json['name'],
       score: json['score'],
       coordinate: Coordinate.fromJson(json['coordinate']),
-      distance: json['distance']
+      distance: json['distance'],
+      icon: json['icon']
     );
   }
 }
